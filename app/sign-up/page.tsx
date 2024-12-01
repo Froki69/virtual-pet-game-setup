@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Confetti from "react-confetti";
 
-export default function Register() {
+export default function SignUpPage() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -19,11 +19,12 @@ export default function Register() {
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
-    const filledFields = Object.values(formData).filter((val) => val !== "").length;
+    const filledFields = Object.values(formData).filter((val) => val !== "")
+      .length;
     setCompletion((filledFields / Object.keys(formData).length) * 100);
   }, [formData]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -35,7 +36,7 @@ export default function Register() {
     }
   };
 
-  const checkPasswordStrength = (password) => {
+  const checkPasswordStrength = (password: string) => {
     if (password.length >= 8 && /\d/.test(password) && /[A-Z]/.test(password)) {
       return "Strong";
     } else if (password.length >= 6) {
@@ -44,7 +45,7 @@ export default function Register() {
     return "Weak";
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -52,10 +53,7 @@ export default function Register() {
       return;
     }
 
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
-
-    const response = await fetch("/api/register", {
+    const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
@@ -67,18 +65,22 @@ export default function Register() {
       setError(data.message || "An error occurred.");
     } else {
       setError("");
-      window.location.href = "/welcome";
+      setShowConfetti(true);
+      setTimeout(() => {
+        setShowConfetti(false);
+        window.location.href = "/welcome";
+      }, 3000);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-between bg-gradient-to-br from-pink-300 via-purple-300 to-blue-200 relative overflow-hidden">
-      {/* Floating Hearts */}
+      {showConfetti && <Confetti />}
       <div className="absolute inset-0 pointer-events-none">
         {[...Array(20)].map((_, index) => (
           <div
             key={index}
-            className={`absolute w-6 h-6 bg-pink-400 rounded-full opacity-60 animate-bounce`}
+            className="absolute w-6 h-6 bg-pink-400 rounded-full opacity-60 animate-bounce"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -87,23 +89,15 @@ export default function Register() {
           />
         ))}
       </div>
-
-      {/* Confetti */}
-      {showConfetti && <Confetti />}
-
-      {/* Header Section */}
       <div className="relative w-1/2 flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-6xl font-extrabold text-pink-500 mb-4">Welcome!</h1>
         <p className="text-lg text-purple-600">
           Create your account and join our fun virtual pet adventure!
         </p>
       </div>
-
-      {/* Form Section */}
       <div className="relative w-1/2 bg-white bg-opacity-80 backdrop-blur-xl p-10 rounded-l-3xl shadow-2xl">
         <h2 className="text-4xl font-bold text-pink-600 mb-6">Register</h2>
         <form onSubmit={handleSubmit}>
-          {/* Full Name */}
           <div className="mb-4">
             <label htmlFor="fullName" className="block text-sm text-gray-700 mb-1">
               Full Name
@@ -116,8 +110,6 @@ export default function Register() {
               className="w-full px-4 py-2 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
-
-          {/* Email */}
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm text-gray-700 mb-1">
               Email Address
@@ -130,8 +122,6 @@ export default function Register() {
               className="w-full px-4 py-2 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
-
-          {/* Password */}
           <div className="mb-4">
             <label htmlFor="password" className="block text-sm text-gray-700 mb-1">
               Password
@@ -155,8 +145,6 @@ export default function Register() {
               Password Strength: {passwordStrength || "Enter Password"}
             </p>
           </div>
-
-          {/* Confirm Password */}
           <div className="mb-4">
             <label htmlFor="confirmPassword" className="block text-sm text-gray-700 mb-1">
               Confirm Password
@@ -169,8 +157,6 @@ export default function Register() {
               className="w-full px-4 py-2 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
-
-          {/* Date of Birth */}
           <div className="mb-4">
             <label htmlFor="dateOfBirth" className="block text-sm text-gray-700 mb-1">
               Date of Birth
@@ -183,8 +169,6 @@ export default function Register() {
               className="w-full px-4 py-2 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
-
-          {/* Gender */}
           <div className="mb-4">
             <label htmlFor="gender" className="block text-sm text-gray-700 mb-1">
               Gender
@@ -201,8 +185,6 @@ export default function Register() {
               <option value="other">Other</option>
             </select>
           </div>
-
-          {/* Nationality */}
           <div className="mb-6">
             <label htmlFor="nationality" className="block text-sm text-gray-700 mb-1">
               Nationality
@@ -215,11 +197,7 @@ export default function Register() {
               className="w-full px-4 py-2 border rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
-
-          {/* Error Message */}
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition"
