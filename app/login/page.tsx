@@ -32,7 +32,7 @@ export default function LoginPage() {
       setError(data.message || "An error occurred.");
     } else {
       setError("");
-      window.location.href = "/dashboard"; // Redirect to the desired page
+      window.location.href = "/game"; // Redirect to the desired page
     }
   };
 

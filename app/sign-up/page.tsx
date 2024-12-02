@@ -68,7 +68,7 @@ export default function SignUpPage() {
       setShowConfetti(true);
       setTimeout(() => {
         setShowConfetti(false);
-        window.location.href = "/welcome";
+        window.location.href = "/login";
       }, 3000);
     }
   };
